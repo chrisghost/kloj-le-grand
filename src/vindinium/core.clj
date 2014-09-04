@@ -8,6 +8,10 @@
 (def server-url "http://10.0.25.125:9000/")
 
 (defn neigb [ [x y] ]
+  ;(prn "neigb args :")
+  ;(prn x)
+  ;(prn y)
+  ;(prn "neigb args ////")
   (filter (fn [e] (and (>= (e 0) 0) (>= (e 1) 0)))
     [
       [(- x 1) y]
@@ -25,33 +29,25 @@
 
 (defn bfs [tovisit search tiles size visited]
   (let [
-        ;_ (prn "__________________++++++++++++++++++;")
         t (first tovisit)
         next-to-visit (drop 1 tovisit)
         cur (last t)
-        ;_ (prn tovisit)
-        ;_ (prn t)
-        ;_ (prn "/////////////////")
-        ;_ (prn cur)
         n (neigb cur)
-        ;_ (prn (filter #(not (contains? (set visited)  %)) n))
-        ;_ (prn (vec
-        ;        [(map
-        ;             (fn [e] (prn "...")(prn e)(conj t e))
-        ;             (filter #(not (contains? (set visited) %)) n))]))
         _ (map #(prn %) tovisit)
-        ;_ (prn (vec (map (fn [e] (conj t [e])) (filter #(not (contains? (set visited) %)) n))))
         ]
        (if (search cur)
          t ;curpath
          (bfs
-           ;(distinct
+           (if (and (not= (at cur tiles size) {:tile :air}) (not= (get (at cur tiles size) :tile) :hero))
+             (vec next-to-visit)
              (into
                (vec next-to-visit)
                (vec
                  (map
                       (fn [e] (conj t e))
-                      (filter #(not (contains? (set visited) %)) n))))
+                      ;(filter (fn [e] (prn (at e tiles size)) (prn e) (= {:tile :air} (at e tiles size)))
+                        (filter #(not (contains? (set visited) %)) n))))
+             )
            search
            tiles
            size
@@ -66,8 +62,8 @@
     (if (> x tx)
       "west"
       (if (< y ty)
-        "north"
         "south"
+        "north"
         )
       )
   )
@@ -75,7 +71,6 @@
 
 (defn bot [{:keys [game hero] :as input}] ;[id turn maxTurns heroes [size tiles] finished] hero token viewUrl playUrl] }]
   "Implement this function to create your bot!"
-  ; (prn input)
   (let [
         heroes (get game :heroes)
         board (get game :board)
@@ -90,11 +85,13 @@
                size
                [hpos])
         ]
-
+    ;(prn hpos)
+    ;(prn (first (drop 1 path)))
+    ;(prn (at (last path) tiles size))
+    (prn (getdir hpos (first (drop 1 path))))
+    ;(prn "================")
     (getdir hpos (first (drop 1 path)))
-    ;(prn (at [1 1] tiles size))
-    ;(first (shuffle ["north", "south", "east", "west", "stay"]))
-    ))
+  ))
 
 (defn at [[x y] tiles size]
  (tiles (+ (* y size) x)))
