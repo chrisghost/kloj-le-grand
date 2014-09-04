@@ -1,4 +1,7 @@
-Clojure starter pack for [vindinium](http://vindinium.org)
+Kloj le Grand
+=============
+
+Clojure bot for [vindinium](http://vindinium.org)
 
 ## Usage
 

@@ -51,7 +51,8 @@
            search
            tiles
            size
-           (conj visited t))
+           (conj visited t)
+           )
          )
     )
   )
@@ -75,12 +76,16 @@
         heroes (get game :heroes)
         board (get game :board)
         hpos (get hero :pos)
+        hlife (get hero :life)
         size (get board :size)
         tiles (get board :tiles)
+        aim (if (< hlife 50)
+              :tavern
+              :mine)
         path (bfs
                [[hpos]]
                (fn [e]
-                 (= (at e tiles size) {:tile :mine}))
+                 (= (at e tiles size) {:tile aim}))
                tiles
                size
                [hpos])
