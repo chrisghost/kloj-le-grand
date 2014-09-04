@@ -23,7 +23,7 @@
   (nth tiles (+ (* y size) x))
   )
 
-(defn bfs [tovisit search tiles size visited curpath]
+(defn bfs [tovisit search tiles size visited]
   (let [
         ;_ (prn "__________________++++++++++++++++++;")
         t (first tovisit)
@@ -55,29 +55,46 @@
            search
            tiles
            size
-           (conj visited t)
-           curpath
-           )
+           (conj visited t))
          )
     )
   )
 
-(defn bot [{:keys [game] :as input}] ;[id turn maxTurns heroes [size tiles] finished] hero token viewUrl playUrl] }]
+(defn getdir [[x y] [tx ty]]
+  (if (< x tx)
+    "east"
+    (if (> x tx)
+      "west"
+      (if (< y ty)
+        "north"
+        "south"
+        )
+      )
+  )
+  )
+
+(defn bot [{:keys [game hero] :as input}] ;[id turn maxTurns heroes [size tiles] finished] hero token viewUrl playUrl] }]
   "Implement this function to create your bot!"
   ; (prn input)
   (let [
         heroes (get game :heroes)
         board (get game :board)
+        hpos (get hero :pos)
         size (get board :size)
         tiles (get board :tiles)
+        path (bfs
+               [[hpos]]
+               (fn [e]
+                 (= (at e tiles size) {:tile :mine}))
+               tiles
+               size
+               [hpos])
         ]
 
-    (prn (bfs [[[1 1]]] (fn [e]
-                        (= (at e tiles size) {:tile :mine})) tiles size [[1 1]] []))
-
+    (getdir hpos (first (drop 1 path)))
     ;(prn (at [1 1] tiles size))
-    (first (shuffle ["north", "south", "east", "west", "stay"])))
-  )
+    ;(first (shuffle ["north", "south", "east", "west", "stay"]))
+    ))
 
 (defn at [[x y] tiles size]
  (tiles (+ (* y size) x)))
