@@ -7,11 +7,51 @@
 
 (def server-url "http://10.0.25.125:9000/")
 
+(defn neigb [ [x y] ]
+  (filter (fn [e] (and (>= (e 0) 0) (>= (e 1) 0)))
+    [
+      [(- x 1) y]
+      [x (+ y 1)]
+      [(+ x 1) y]
+      [x (- y 1)]
+    ])
+  )
 
 (defn at [[x y] tiles size]
+  ;(prn ">at")
+  ;(prn (+ (* y size) x))
   (nth tiles (+ (* y size) x))
   )
 
+(defn bfs [tovisit search tiles size visited curpath]
+  (let [
+        t (first tovisit)
+
+        _ (prn curpath)
+        ;_ (prn tovisit)
+        next-to-visit (drop 1 tovisit)
+        ;_ (prn next-to-visit)
+        ;_ (prn "=============")
+        ;_ (prn t)
+        n (neigb t)
+        ;_ (prn n)
+        ;_ (prn "_+++++++++++")
+        ]
+    ;(prn Q)
+    ;(prn (filter #(not (contains? visited %)) n))
+    ;(map #((prn %)) (vec (neigb t)))
+    ;(map (fn [e]
+           ;(prn (at t tiles size))
+           (if (search t)
+             t ;curpath
+             (bfs  (distinct (into (vec next-to-visit ) (vec (filter #(not (contains? (set visited) %)) n))))
+                    search tiles size (conj visited t) (into curpath [t]))
+             )
+           ;)
+          ;(filter #(not (contains? visited %)) n)
+         ;)
+    )
+  )
 
 (defn bot [{:keys [game] :as input}] ;[id turn maxTurns heroes [size tiles] finished] hero token viewUrl playUrl] }]
   "Implement this function to create your bot!"
@@ -23,7 +63,11 @@
         tiles (get board :tiles)
         ]
 
-    (prn (at [1 1] tiles size))
+    (prn (bfs [[1 1]] (fn [e]
+                        ;(prn (at e tiles size))
+                        (= (at e tiles size) {:tile :mine})) tiles size [[1 1]] []))
+
+    ;(prn (at [1 1] tiles size))
     (first (shuffle ["north", "south", "east", "west", "stay"])))
   )
 
