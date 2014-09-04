@@ -25,31 +25,40 @@
 
 (defn bfs [tovisit search tiles size visited curpath]
   (let [
+        ;_ (prn "__________________++++++++++++++++++;")
         t (first tovisit)
-
-        _ (prn curpath)
-        ;_ (prn tovisit)
         next-to-visit (drop 1 tovisit)
-        ;_ (prn next-to-visit)
-        ;_ (prn "=============")
+        cur (last t)
+        ;_ (prn tovisit)
         ;_ (prn t)
-        n (neigb t)
-        ;_ (prn n)
-        ;_ (prn "_+++++++++++")
+        ;_ (prn "/////////////////")
+        ;_ (prn cur)
+        n (neigb cur)
+        ;_ (prn (filter #(not (contains? (set visited)  %)) n))
+        ;_ (prn (vec
+        ;        [(map
+        ;             (fn [e] (prn "...")(prn e)(conj t e))
+        ;             (filter #(not (contains? (set visited) %)) n))]))
+        _ (map #(prn %) tovisit)
+        ;_ (prn (vec (map (fn [e] (conj t [e])) (filter #(not (contains? (set visited) %)) n))))
         ]
-    ;(prn Q)
-    ;(prn (filter #(not (contains? visited %)) n))
-    ;(map #((prn %)) (vec (neigb t)))
-    ;(map (fn [e]
-           ;(prn (at t tiles size))
-           (if (search t)
-             t ;curpath
-             (bfs  (distinct (into (vec next-to-visit ) (vec (filter #(not (contains? (set visited) %)) n))))
-                    search tiles size (conj visited t) (into curpath [t]))
-             )
-           ;)
-          ;(filter #(not (contains? visited %)) n)
-         ;)
+       (if (search cur)
+         t ;curpath
+         (bfs
+           ;(distinct
+             (into
+               (vec next-to-visit)
+               (vec
+                 (map
+                      (fn [e] (conj t e))
+                      (filter #(not (contains? (set visited) %)) n))))
+           search
+           tiles
+           size
+           (conj visited t)
+           curpath
+           )
+         )
     )
   )
 
@@ -63,8 +72,7 @@
         tiles (get board :tiles)
         ]
 
-    (prn (bfs [[1 1]] (fn [e]
-                        ;(prn (at e tiles size))
+    (prn (bfs [[[1 1]]] (fn [e]
                         (= (at e tiles size) {:tile :mine})) tiles size [[1 1]] []))
 
     ;(prn (at [1 1] tiles size))
