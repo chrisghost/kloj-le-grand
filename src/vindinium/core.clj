@@ -5,12 +5,27 @@
 
 (require '[clj-http.client :as http])
 
-(def server-url "http://vindinium.org")
+(def server-url "http://10.0.25.125:9000/")
 
-(defn bot [input]
+
+(defn at [[x y] tiles size]
+  (nth tiles (+ (* y size) x))
+  )
+
+
+(defn bot [{:keys [game] :as input}] ;[id turn maxTurns heroes [size tiles] finished] hero token viewUrl playUrl] }]
   "Implement this function to create your bot!"
   ; (prn input)
-  (first (shuffle ["north", "south", "east", "west", "stay"])))
+  (let [
+        heroes (get game :heroes)
+        board (get game :board)
+        size (get board :size)
+        tiles (get board :tiles)
+        ]
+
+    (prn (at [1 1] tiles size))
+    (first (shuffle ["north", "south", "east", "west", "stay"])))
+  )
 
 (defn at [[x y] tiles size]
  (tiles (+ (* y size) x)))
